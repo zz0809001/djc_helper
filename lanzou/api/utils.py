@@ -6,8 +6,8 @@ import logging
 import os
 import pickle
 import re
-from datetime import timedelta, datetime
-from random import uniform, choices, sample, shuffle, choice
+from datetime import datetime, timedelta
+from random import choice, choices, sample, shuffle, uniform
 
 import requests
 
@@ -46,6 +46,9 @@ def name_format(name: str) -> str:
     return re.sub(r'[$%^!*<>)(+=`\'\"/:;,?]', '', name)
 
 
+reg_date = r'\d{4}-\d{2}-\d{2}'
+
+
 def time_format(time_str: str) -> str:
     """输出格式化时间 %Y-%m-%d %H:%M:%S"""
     now = datetime.now()
@@ -65,6 +68,9 @@ def time_format(time_str: str) -> str:
     elif '天前' in time_str:
         days = time_str.replace(' 天前', '')
         delta = timedelta(days=int(days))
+    elif re.match(reg_date, time_str):
+        # 2022-03-25
+        delta = now - datetime.strptime(time_str, '%Y-%m-%d')
     else:
         return time_str
 
@@ -88,8 +94,8 @@ def is_name_valid(filename: str) -> bool:
 
 def is_file_url(share_url: str) -> bool:
     """判断是否为文件的分享链接"""
-    base_pat = r'https?://[a-zA-Z0-9-]*?\.?lanzou[six].com/.+'  # 子域名可个性化设置或者不存在
-    user_pat = r'https?://[a-zA-Z0-9-]*?\.?lanzou[six].com/i[a-zA-Z0-9]{5,}/?'  # 普通用户 URL 规则
+    base_pat = r'https?://[a-zA-Z0-9-]*?\.?lanzou\w.com/.+'  # 子域名可个性化设置或者不存在
+    user_pat = r'https?://[a-zA-Z0-9-]*?\.?lanzou\w.com/i[a-zA-Z0-9]{5,}/?'  # 普通用户 URL 规则
     if not re.fullmatch(base_pat, share_url):
         return False
     elif re.fullmatch(user_pat, share_url):
@@ -105,8 +111,8 @@ def is_file_url(share_url: str) -> bool:
 
 def is_folder_url(share_url: str) -> bool:
     """判断是否为文件夹的分享链接"""
-    base_pat = r'https?://[a-zA-Z0-9-]*?\.?lanzou[six].com/.+'
-    user_pat = r'https?://[a-zA-Z0-9-]*?\.?lanzou[six].com/(/s/)?b[a-zA-Z0-9]{7,}/?'
+    base_pat = r'https?://[a-zA-Z0-9-]*?\.?lanzou\w.com/.+'
+    user_pat = r'https?://[a-zA-Z0-9-]*?\.?lanzou\w.com/(/s/)?b[a-zA-Z0-9]{7,}/?'
     if not re.fullmatch(base_pat, share_url):
         return False
     elif re.fullmatch(user_pat, share_url):

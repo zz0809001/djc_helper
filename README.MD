@@ -88,14 +88,28 @@
 > git clone --depth=1 https://gitee.com/fzls/djc_helper.git
 
 或者可以使用github的镜像加速访问，如
+> git clone --depth=1 https://gitclone.com/github.com/fzls/djc_helper.git
+
 > git clone --depth=1 https://github.com.cnpmjs.org/fzls/djc_helper.git
-> git clone --depth=1 https://hub.fastgit.org/fzls/djc_helper.git
+
+> git clone --depth=1 https://hub.fastgit.xyz/fzls/djc_helper.git
+
 
 ## 运行方式
 1. 使用打包版本
-> * 直接下载蓝奏云中的二进制版本使用 https://fzls.lanzouo.com/s/djc-helper
-> * 下载github最新发布版本 https://github.com/fzls/djc_helper/releases/download/latest/djc_helper.7z
-> * 使用镜像加速国内下载 https://download.fastgit.org/fzls/djc_helper/releases/download/latest/djc_helper.7z
+
+| 来源 | 链接 |
+| :---- | :---- |
+| 网盘 | https://fzls.lanzouo.com/s/djc-helper |
+| github | https://github.com/fzls/djc_helper/releases/download/latest/djc_helper.7z |
+| 镜像 | https://pd.zwc365.com/seturl/https://github.com/fzls/djc_helper/releases/download/latest/djc_helper.7z |
+| 镜像 | https://gh.xiu.workers.dev/https://github.com/fzls/djc_helper/releases/download/latest/djc_helper.7z |
+| 镜像 | https://gh.api.99988866.xyz/https://github.com/fzls/djc_helper/releases/download/latest/djc_helper.7z |
+| 镜像 | https://github.rc1844.workers.dev/fzls/djc_helper/releases/download/latest/djc_helper.7z |
+| 镜像 | https://ghgo.feizhuqwq.workers.dev/https://github.com/fzls/djc_helper/releases/download/latest/djc_helper.7z |
+| 镜像 | https://git.yumenaka.net/https://github.com/fzls/djc_helper/releases/download/latest/djc_helper.7z |
+| 镜像 | https://ghproxy.com/https://github.com/fzls/djc_helper/releases/download/latest/djc_helper.7z |
+| 镜像 | https://download.fastgit.org/fzls/djc_helper/releases/download/latest/djc_helper.7z |
 
 2. 使用源码版本
 > 拉取代码后，安装依赖，然后运行main.py，根据提示操作
@@ -203,6 +217,7 @@ DNF蚊子腿小助手六群 444193814 <br>
 DNF蚊子腿小助手七群 389786092 <br>
 DNF蚊子腿小助手八群 552940664 <br>
 DNF蚊子腿小助手九群 517463079 <br>
+DNF蚊子腿小助手10群 791343073 <br>
 
 # 『重要』与个人隐私有关的skey相关说明
 1. skey是腾讯系应用的通用鉴权票据，个中风险，请Google搜索《腾讯skey》后自行评估

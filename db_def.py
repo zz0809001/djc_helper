@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import datetime
 import os
+import pathlib
+import shutil
 from typing import Any, Callable
 
-from const import db_top_dir
+from const import db_top_dir, db_top_dir_v1, db_top_dir_v2
 from data_struct import ConfigInterface
 from log import logger
 
@@ -30,10 +32,12 @@ class DBInterface(ConfigInterface):
 
     def get_update_at(self) -> datetime.datetime:
         from util import parse_time
+
         return parse_time(self._update_at, self.time_cmt_millseconds)
 
     def set_update_at(self):
         from util import format_now
+
         self._update_at = format_now(self.time_cmt_millseconds)
 
     def get_version(self) -> str:
@@ -56,10 +60,13 @@ class DBInterface(ConfigInterface):
             try:
                 self.load_from_json_file(db_file)
             except Exception as e:
-                logger.error(f"读取数据库失败，将重置该数据库 context={self.context} db_type_name={self.db_type_name} db_file={db_file}", exc_info=e)
+                logger.error(
+                    f"读取数据库失败，将重置该数据库 context={self.context} db_type_name={self.db_type_name} db_file={db_file}",
+                    exc_info=e,
+                )
                 self.save()
 
-                with open(db_file, 'r', encoding='utf-8') as f:
+                with open(db_file, encoding="utf-8") as f:
                     old_content = f.read()
                 logger.debug(f"old_content={old_content}")
 
@@ -130,7 +137,9 @@ class DBInterface(ConfigInterface):
         else:
             key_md5 = self.get_db_filename()
 
-            db_dir = os.path.join(db_top_dir, key_md5[0:3])
+            hash_part_one = key_md5[0:2]
+            hash_part_two = key_md5[2:4]
+            db_dir = os.path.join(db_top_dir, hash_part_one, hash_part_two)
             db_file = os.path.join(db_dir, key_md5)
 
         make_sure_dir_exists(db_dir)
@@ -142,6 +151,45 @@ class DBInterface(ConfigInterface):
 
         key = f"{self.context}/{self.db_type_name}{self.get_version()}"
         return md5(key)
+
+
+def try_migrate_db():
+    from util import try_except
+
+    @try_except()
+    def _wrapper():
+        v1_to_v2()
+
+    _wrapper()
+
+
+def v1_to_v2():
+    from util import make_sure_dir_exists
+
+    if not os.path.exists(db_top_dir_v1):
+        return
+
+    make_sure_dir_exists(db_top_dir_v2)
+
+    db_files = list(pathlib.Path(db_top_dir_v1).glob("*/*"))
+
+    ctx = "数据库 v1 -> v2"
+
+    logger.info(f"{ctx} 将开始迁移，总计文件 {len(db_files)} 个")
+
+    for idx, db_file in enumerate(db_files):
+        logger.info(f"[{idx+1}/{len(db_files)}] {ctx} 正在迁移 {db_file}")
+        hname = db_file.name
+
+        target_directory = f"{db_top_dir_v2}/{hname[0:2]}/{hname[2:4]}"
+        path_v2 = f"{target_directory}/{hname}"
+
+        make_sure_dir_exists(target_directory)
+        shutil.copy2(db_file.absolute(), path_v2)
+
+    logger.info(f"{ctx} 迁移完毕，将清理旧版本")
+
+    shutil.rmtree(db_top_dir_v1)
 
 
 def test():
@@ -188,6 +236,8 @@ def test_filepath_db():
     print(filepath_db.prepare_env_and_get_db_filepath())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # test()
     test_filepath_db()
+
+    try_migrate_db()

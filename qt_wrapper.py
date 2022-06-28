@@ -1,13 +1,28 @@
+from __future__ import annotations
+
 import datetime
 import math
-from typing import List, Tuple
 
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal
 from PyQt5.QtGui import QValidator, QWheelEvent
-from PyQt5.QtWidgets import (QCheckBox, QComboBox, QDoubleSpinBox, QFormLayout,
-                             QFrame, QGridLayout, QHBoxLayout, QLabel, QLayout,
-                             QLineEdit, QMessageBox, QPushButton, QScrollArea,
-                             QSpinBox, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (
+    QCheckBox,
+    QComboBox,
+    QDoubleSpinBox,
+    QFormLayout,
+    QFrame,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLayout,
+    QLineEdit,
+    QMessageBox,
+    QPushButton,
+    QScrollArea,
+    QSpinBox,
+    QVBoxLayout,
+    QWidget,
+)
 
 from log import logger
 from qt_collapsible_box import CollapsibleBox
@@ -16,40 +31,40 @@ from util import get_now, padLeftRight
 
 class QHLine(QFrame):
     def __init__(self):
-        super(QHLine, self).__init__()
+        super().__init__()
         self.setFrameShape(QFrame.HLine)
         self.setFrameShadow(QFrame.Sunken)
 
 
 class QVLine(QFrame):
     def __init__(self):
-        super(QVLine, self).__init__()
+        super().__init__()
         self.setFrameShape(QFrame.VLine)
         self.setFrameShadow(QFrame.Sunken)
 
 
 class MySpinbox(QSpinBox):
     def __init__(self, parent=None):
-        super(MySpinbox, self).__init__(parent)
+        super().__init__(parent)
 
         self.setFocusPolicy(Qt.StrongFocus)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.hasFocus():
-            super(MySpinbox, self).wheelEvent(event)
+            super().wheelEvent(event)
         else:
             event.ignore()
 
 
 class MyDoubleSpinbox(QDoubleSpinBox):
     def __init__(self, parent=None):
-        super(MyDoubleSpinbox, self).__init__(parent)
+        super().__init__(parent)
 
         self.setFocusPolicy(Qt.StrongFocus)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.hasFocus():
-            super(MyDoubleSpinbox, self).wheelEvent(event)
+            super().wheelEvent(event)
         else:
             event.ignore()
 
@@ -59,11 +74,11 @@ class MyComboBox(QComboBox):
 
     def showPopup(self):
         self.clicked.emit()
-        super(MyComboBox, self).showPopup()
+        super().showPopup()
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         if self.hasFocus():
-            super(MyComboBox, self).wheelEvent(event)
+            super().wheelEvent(event)
         else:
             event.ignore()
 
@@ -104,7 +119,7 @@ def create_double_spin_box(value: float, maximum: float = 1.0, minimum: float = 
     return spinbox
 
 
-def create_combobox(current_val: str, values: List[str] = None) -> MyComboBox:
+def create_combobox(current_val: str, values: list[str] | None = None) -> MyComboBox:
     combobox = MyComboBox()
 
     combobox.setFocusPolicy(Qt.StrongFocus)
@@ -160,7 +175,9 @@ def make_scroll_layout(inner_layout: QLayout):
     return scroll_layout
 
 
-def create_collapsible_box_with_sub_form_layout_and_add_to_parent_layout(title: str, parent_layout: QLayout, fold: bool = True, title_backgroup_color="") -> Tuple[CollapsibleBox, QFormLayout]:
+def create_collapsible_box_with_sub_form_layout_and_add_to_parent_layout(
+    title: str, parent_layout: QLayout, fold: bool = True, title_backgroup_color=""
+) -> tuple[CollapsibleBox, QFormLayout]:
     collapsible_box = CollapsibleBox(title, title_backgroup_color=title_backgroup_color)
     parent_layout.addWidget(collapsible_box)
 
@@ -172,7 +189,9 @@ def create_collapsible_box_with_sub_form_layout_and_add_to_parent_layout(title: 
     return collapsible_box, form_layout
 
 
-def create_collapsible_box_add_to_parent_layout(title: str, parent_layout: QLayout, title_backgroup_color="") -> CollapsibleBox:
+def create_collapsible_box_add_to_parent_layout(
+    title: str, parent_layout: QLayout, title_backgroup_color=""
+) -> CollapsibleBox:
     collapsible_box = CollapsibleBox(title, title_backgroup_color=title_backgroup_color)
     parent_layout.addWidget(collapsible_box)
 
@@ -185,12 +204,12 @@ def init_collapsible_box_size(parent_widget: QWidget):
         if not attr_name.startswith("collapsible_box_"):
             continue
 
-        collapsible_box = getattr(parent_widget, attr_name)  # type: CollapsibleBox
+        collapsible_box: CollapsibleBox = getattr(parent_widget, attr_name)
         collapsible_box.try_adjust_size()
 
 
-def list_to_str(vlist: List[str]):
-    return ','.join(str(v) for v in vlist)
+def list_to_str(vlist: list[str]):
+    return ",".join(str(v) for v in vlist)
 
 
 def str_to_list(str_list: str):
@@ -198,11 +217,11 @@ def str_to_list(str_list: str):
     if str_list == "":
         return []
 
-    return [s.strip() for s in str_list.split(',')]
+    return [s.strip() for s in str_list.split(",")]
 
 
 class QQListValidator(QValidator):
-    def validate(self, text: str, pos: int) -> Tuple['QValidator.State', str, int]:
+    def validate(self, text: str, pos: int) -> tuple[QValidator.State, str, int]:
         sl = str_to_list(text)
 
         for qq in sl:
@@ -212,12 +231,16 @@ class QQListValidator(QValidator):
         return (QValidator.Acceptable, text, pos)
 
 
-def show_message(title: str, text: str, disabled_seconds=0):
-    logger.info(f"{title} {text}")
+def show_message(title: str, text: str, disabled_seconds=0, is_text_selectable=False, show_log=True):
+    if show_log:
+        logger.info(f"{title} {text}")
 
     message_box = ConfirmMessageBox()
     message_box.setWindowTitle(title)
     message_box.setText(text)
+
+    if is_text_selectable:
+        message_box.setTextInteractionFlags(Qt.TextSelectableByMouse)
 
     message_box.setStandardButtons(QMessageBox.Ok)
     if disabled_seconds > 0:
@@ -231,7 +254,7 @@ class ConfirmMessageBox(QMessageBox):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def set_disabled_duration(self, seconds: float, btn_indexes: List[int]):
+    def set_disabled_duration(self, seconds: float, btn_indexes: list[int]):
         self.end_time = get_now() + datetime.timedelta(seconds=seconds)
         self.btn_indexes = btn_indexes
 
@@ -253,7 +276,9 @@ class ConfirmMessageBox(QMessageBox):
         if get_now() < self.end_time:
             remaining_time = self.end_time - get_now()
             for btn_idx in self.btn_indexes:
-                self.buttons()[btn_idx].setText(self.old_names[btn_idx] + f"（{math.ceil(remaining_time.total_seconds())} 秒后可以点击）")
+                self.buttons()[btn_idx].setText(
+                    self.old_names[btn_idx] + f"（{math.ceil(remaining_time.total_seconds())} 秒后可以点击）"
+                )
         else:
             self.time.stop()
 
@@ -264,12 +289,26 @@ class ConfirmMessageBox(QMessageBox):
                 btn.setEnabled(True)
 
 
+def show_confirm_message_box(
+    title: str,
+    message: str,
+    confirm_duration: int = 3,
+) -> int:
+    message_box = ConfirmMessageBox()
+    message_box.setWindowTitle(title)
+    message_box.setText(message)
+    message_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+    message_box.set_disabled_duration(confirm_duration, [0])
+
+    return message_box.exec_()
+
+
 class MyPushButtonGridLayout(QGridLayout):
     def __init__(self, color="Cyan"):
-        super(MyPushButtonGridLayout, self).__init__()
+        super().__init__()
 
         self.color = color
-        self.buttons = []  # type: List[QPushButton]
+        self.buttons: list[QPushButton] = []
 
     def add_button(self, btn: QPushButton, row: int, col: int):
         btn.setStyleSheet(f"QPushButton::checked {{ background-color: {self.color}; }}")
@@ -302,7 +341,7 @@ class MyPushButtonGridLayout(QGridLayout):
         return ""
 
 
-def create_push_button_grid_layout(items: List[str], color="Cyan", width=3) -> MyPushButtonGridLayout:
+def create_push_button_grid_layout(items: list[str], color="Cyan", width=3) -> MyPushButtonGridLayout:
     grid_layout = MyPushButtonGridLayout(color)
 
     for idx, item in enumerate(items):

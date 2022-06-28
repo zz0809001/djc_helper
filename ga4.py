@@ -1,5 +1,4 @@
 # Google Analytics 4 上报脚本
-
 import requests
 
 from log import logger
@@ -22,12 +21,11 @@ headers = {
 
 @try_except(show_exception_info=False)
 def track_event(category: str, event_name: str):
-    event_name = event_name.replace('/', '_')
+    event_name = event_name.replace("/", "_")
 
     json_data = {
         "client_id": get_cid(),
         "user_id": get_cid(),
-
         "events": [
             {
                 "name": category,
@@ -41,7 +39,7 @@ def track_event(category: str, event_name: str):
     res = requests.post(GA_API_URL, json=json_data, headers=headers, timeout=10)
 
     # 打印日志，方便调试
-    debug_msg = f"request info: body = {res.request.body}"
+    debug_msg = f"request info: body = {res.request.body!r}"
     logFunc = logger.debug
     if "debug" in GA_API_BASE_URL:
         debug_msg += f" res = {res.text}"
@@ -49,6 +47,6 @@ def track_event(category: str, event_name: str):
     logFunc(debug_msg)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     track_event("test_category", "test_event/name_1")
     track_event("test_category", "test_event_name_2")

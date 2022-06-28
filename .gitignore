@@ -10,6 +10,7 @@ coverage.xml
 
 test/
 test.py
+demo_*.py
 
 start_config_ui.bat
 *.lnk
@@ -17,6 +18,7 @@ start_config_ui.bat
 **/.first_run/
 **/.cached/
 **/.db/
+**/.db_v2/
 **/.log.filename
 
 config.toml.local
@@ -31,6 +33,11 @@ DNF蚊子腿小助手_集卡特别版.exe
 releases/
 
 utils/auto_updater.exe
+utils/chrome*.download
+utils/chrome_temporary_dir/
+
+utils/chrome_portable_*.7z
+utils/chromedriver_*.exe
 
 _update_temp_dir/
 
